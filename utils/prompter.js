@@ -26,7 +26,7 @@ class Prompter
             {
                 host: 'localhost',
                 user: 'root',
-                password: 'Legoman62',
+                password: '',
                 database: 'employees_db'
             },
             console.log("")
