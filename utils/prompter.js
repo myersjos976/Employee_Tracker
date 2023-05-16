@@ -1,5 +1,6 @@
 const inquirer = require("inquirer");
 const fs = require("fs");
+const mysql = require("mysql2");
 
 //TODO: Needs to by grabbed from the database
 const roles = [];
@@ -19,6 +20,19 @@ const employees = [];
 */
 class Prompter 
 {
+    constructor() {
+        // Connect to database
+        this.db = mysql.createConnection(
+            {
+                host: 'localhost',
+                user: 'root',
+                password: 'Legoman62',
+                database: 'employees_db'
+            },
+            console.log("")
+        );
+    }
+
     /* 
         Adds new employee to the database
         Prompts user for firstName, lastName, employeeRole, employeeManager 
@@ -51,10 +65,23 @@ class Prompter
                     default: "None",
                     name: "employeeManager",
                 },
-
             ])
             .then((response) => {
-//TODO: Add employee to the database from prompts.    
+                console.log("We're here");
+                //TODO: Add employee to the database from prompts.
+                const sql = `INSERT INTO employees (first_name, last_name, role_id, manager_id)
+                VALUES (?)`;
+                const params = [response.firstName, response.lastName, response.employeeRole, response.employeeManager];
+
+                this.db.query(sql, params, (err, result) => {
+                if (err) {
+                res.status(400).json({ error: err.message });
+                return;
+                }
+                res.json({
+                message: 'success',
+                });
+                });
     
             },
                 (err) =>
@@ -91,7 +118,7 @@ class Prompter
     
             },
                 (err) =>
-                    err ? console.error(err) : console.log("Added employee to database")
+                    err ? console.error(err) : console.log("Updated employee's role")
             );
     }
 
@@ -176,7 +203,7 @@ class Prompter
     */
     quit() 
     {
-//TODO: End program
+        prompt.ui.close()
     } 
 }
 
